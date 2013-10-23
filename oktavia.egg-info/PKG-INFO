@@ -1,0 +1,11 @@
+Metadata-Version: 1.0
+Name: oktaia.py
+Version: 0.1.0dev
+Summary: High performance pure Python/JavaScript search engine
+Home-page: https://github.com/shibukawa/oktavia.py/
+Author: Yoshiki Shibukawa
+Author-email: yoshiki@shibu.jp
+License: MIT
+Description: UNKNOWN
+Keywords: search python javascript fmindex
+Platform: UNKNOWN

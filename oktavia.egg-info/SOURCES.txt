@@ -1,0 +1,9 @@
+setup.cfg
+setup.py
+oktaia.py.egg-info/PKG-INFO
+oktaia.py.egg-info/SOURCES.txt
+oktaia.py.egg-info/dependency_links.txt
+oktaia.py.egg-info/entry_points.txt
+oktaia.py.egg-info/top_level.txt
+oktaia.py.egg-info/zip-safe
+oktaiapy/__init__.py
