@@ -7,7 +7,7 @@ License: http://shibu.mit-license.org/
 
 from . import binaryio
 import math
-import struct
+import array
 
 class BitVector(object):
     SMALL_BLOCK_SIZE =  32
@@ -15,16 +15,16 @@ class BitVector(object):
     BLOCK_RATE       =   8
 
     def __init__(self):
-        self._r = bytearray()
-        self._v = bytearray()
+        self._r = array.array('L')
+        self._v = array.array('L')
         self.clear()
 
     def build(self):
         self._size1 = 0
         for i, value in enumerate(self._v):    
             if i % BitVector.BLOCK_RATE == 0:
-                self._r.append(self.size(true))
-            self._size1 += self._rank32(self._v[i], BitVector.SMALL_BLOCK_SIZE, true)
+                self._r.append(self.size1())
+            self._size1 += self._rank32(self._v[i], BitVector.SMALL_BLOCK_SIZE, True)
 
     def clear(self):
         del self._v[:]
@@ -35,14 +35,19 @@ class BitVector(object):
     def size(self):
         return self._size
 
-    def size(self, b):
+    def size0(self):
         '''
-        :param b: b
-        :type  b: bool
         :return: size
         :rtype: int
         '''
-        return self._size1 if b else (self._size - self._size1)
+        return self._size - self._size1
+
+    def size1(self):
+        '''
+        :return: size
+        :rtype: int
+        '''
+        return self._size1
 
     def set(self, value, flag = True):
         '''
@@ -113,10 +118,13 @@ class BitVector(object):
         :return: result
         :rtype: int
         '''
-        if i >= self.size(b):
+        if b:
+            if i >= self.size1():
+                raise RangeError("BitVector.select() : range error")
+        elif i >= self.size0(): 
             raise RangeError("BitVector.select() : range error")
         left = 0
-        right = self._r.length
+        right = len(self._r)
         while left < right:
             pivot = math.floor((left + right) // 2)
             rank  = self._r[pivot]
@@ -211,7 +219,7 @@ class BitVector(object):
         :type  output: BinaryOutput
         '''
         output.dump_32bit_number(self._size)
-        output.dump_byte_array_as_32bit_number_list(self._v)
+        output.dump_32bit_number_list(self._v.tolist())
 
     def load(self, input):
         '''
@@ -220,6 +228,6 @@ class BitVector(object):
         '''
         self.clear()
         self._size = input.load_32bit_number()
-        result = Binary.load_32bit_number_list()
-        self._v = bytearray(struct.pack("<%dI" % len(result), *result))
+        result = input.load_32bit_number_list()
+        self._v.fromlist(result)
         self.build()

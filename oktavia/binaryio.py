@@ -130,13 +130,6 @@ class BinaryOutput(object):
                     raise ValueError()
                 index += length
 
-    def dump_byte_array_as_32bit_number_list(self, array):
-        rem = len(values) % 4
-        values = self._v[:]
-        self.dump_32bit_number((len(values) + rem) // 4)
-        self._output.append(values)
-        self._output.append(bytes(len(values) % 4))
-
     def _count_zero(self, array, offset):
         for i in range(offset, len(array)):
             if array[i] != 0:
