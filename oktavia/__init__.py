@@ -1,3 +1,5 @@
-from . import binaryio
 from . import bitvector
 from . import bwt
+from . import fmindex
+from . import waveletmatrix
+from . import binaryio

@@ -1,5 +1,5 @@
 '''
-self is a JSX version of shellinford library:
+This is a JSX version of shellinford library:
 https://code.google.com/p/shellinford/
 
 License: http://shibu.mit-license.org/
@@ -7,6 +7,8 @@ License: http://shibu.mit-license.org/
 
 import copy
 import math
+import struct
+
 from . import binaryio
 from . import bitvector
 
@@ -16,30 +18,44 @@ class WaveletMatrix(object):
         self._range = {}
         self._bv = []
         self._seps = []
+        self._maxcharcode = 65535
         self._bitsize = 16
+        self._usedChars = []
         self.clear()
 
     def bitsize(self):
         return self._bitsize
 
-    def set_max_char_code(charCode):
-        self._bitsize = math.ceil(math.log(charCode) / math.log(2))
+    def set_max_char_code(self, char_code):
+        self._maxcharcode = char_code
+        self._bitsize = math.ceil(math.log(self._maxcharcode) / math.log(2))
+
+    def max_char_code(self):
+        return self._maxcharcode
 
     def clear(self):
         del self._bv[:]
         del self._seps[:]
         self._size = 0
 
+    def usedChars(self):
+        return self._usedChars
+
     def build(self, v):
         self.clear()
         size = len(v)
+        if isinstance(v, str):
+            # convert to JavaScript compatible string
+            rawstring = v.encode('utf_16_le')
+            v = struct.unpack("<%dH" % size, rawstring)
+        self._usedChars = set(v)
         bitsize = self.bitsize()
         for i in range(bitsize):
             self._bv.append(bitvector.BitVector())
             self._seps.append(0)
         self._size = size
         for i, c in enumerate(v):
-            self._bv[0].set(i, self._uint2bit(ord(c), 0))
+            self._bv[0].set(i, self._uint2bit(c, 0, bitsize))
         self._bv[0].build()
         self._seps[0] = self._bv[0].size0()
         self._range[0] = 0
@@ -48,9 +64,8 @@ class WaveletMatrix(object):
         depth = 1
         while depth < bitsize:
             range_tmp = copy.copy(self._range)
-            for i, c in enumerate(v):
-                code = ord(c)
-                bit = self._uint2bit(code, depth)
+            for i, code in enumerate(v):
+                bit = self._uint2bit(code, depth, bitsize)
                 key = code >> (bitsize - depth)
                 self._bv[depth].set(range_tmp[key], bit)
                 range_tmp[key] += 1
@@ -87,7 +102,8 @@ class WaveletMatrix(object):
             raise RangeError("WaveletMatrix.get() : range error")
         value = 0
         depth = 0
-        while depth < self.bitsize():
+        bitsize = self.bitsize()
+        while depth < bitsize:
             bit = self._bv[depth].get(i)
             i = self._bv[depth].rank(i, bit)
             value <<= 1
@@ -107,8 +123,9 @@ class WaveletMatrix(object):
             return 0
         end   = i
         depth = 0
-        while depth < self.bitsize():
-            bit = self._uint2bit(c, depth)
+        bitsize = self.bitsize()
+        while depth < bitsize:
+            bit = self._uint2bit(c, depth, bitsize)
             end = self._bv[depth].rank(end, bit)
             if bit:
                 end += self._seps[depth]
@@ -124,10 +141,11 @@ class WaveletMatrix(object):
         end   = i
         depth = 0
         rlt   = 0
-        while depth < self.bitsize():
+        bitsize = self.bitsize()
+        while depth < bitsize:
             rank0_begin = self._bv[depth].rank(begin, False)
             rank0_end   = self._bv[depth].rank(end,   False)
-            if self._uint2bit(c, depth):
+            if self._uint2bit(c, depth, bitsize):
                 rlt += (rank0_end - rank0_begin)
                 begin += (self._seps[depth] - rank0_begin)
                 end   += (self._seps[depth] - rank0_end)
@@ -138,7 +156,8 @@ class WaveletMatrix(object):
         return rlt
     
     def dump(self, output):
-        output.dump_16bit_number(self._bitsize)
+        output.dump_16bit_number(max(self._usedChars))
+        output.dump_16bit_number(self.bitsize())
         output.dump_32bit_number(self._size)
         for i in range(self.bitsize()):
             self._bv[i].dump(output)
@@ -151,6 +170,7 @@ class WaveletMatrix(object):
 
     def load(self, input):
         self.clear()
+        self._maxcharcode = input.load_16bit_number()
         self._bitsize = input.load_16bit_number()
         self._size = input.load_32bit_number()
         for i in range(self.bitsize()):
@@ -165,6 +185,6 @@ class WaveletMatrix(object):
             value = input.load_32bit_number()
             self._range[key] = value
 
-    def _uint2bit(self, c, i):
-        return ((c >> (self._bitsize - 1 - i)) & 0x1) == 0x1
+    def _uint2bit(self, c, i, bitsize):
+        return ((c >> (bitsize - 1 - i)) & 0x1) == 0x1
 
