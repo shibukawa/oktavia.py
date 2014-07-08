@@ -80,15 +80,14 @@ class BinaryOutput(object):
         self._output.append(struct.pack('<H', num % (2 ** 16)))
 
     def dump_string(self, string):
+        if len(string) > 32768:
+            string = string[0:32768]
         length = len(string)
-        if length > 32767:
-            string = string[0:32767]
-            length = 32767
         byte_str = string.encode('utf_16_le')
         compress = True
         char_codes = []
         for i in range(1, len(byte_str), 2):
-            if byte_str[i] != 0:
+            if byte_str[i] != '\x00':
                 compress = False
                 break;
         if compress:

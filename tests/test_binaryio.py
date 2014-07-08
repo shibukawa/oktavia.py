@@ -42,21 +42,20 @@ class BinaryIOTest(unittest.TestCase):
         self.assertEqual('hello world', input1.load_string())
 
         # 7bit safe charactes will be compressed
-        self.assertEqual(len('hello world') + 2 + 1, len(output1.result()))
+        self.assertLessEqual(len(output1.result()) / 2, len('hello world'))
 
         output2 = BinaryOutput()
         output2.dump_string('')
-        self.assertEqual(2, len(output2.result()))
+        self.assertEqual(len('') + 1, len(output2.result()) / 2)
 
         # 7bit unsafe charactes will not be compressed
         output3 = BinaryOutput()
-        output3.dump_string('\u1111\u1111')
-        self.assertEqual(2 + 2 * 2, len(output3.result()))
+        output3.dump_string(u'\u1111\u1111')
+        self.assertEqual(len(output3.result()) / 2, len(u'\u1111\u1111') + 1)
 
     def test_string_list(self):
         output1 = BinaryOutput()
         output1.dump_string_list(['hello', 'world'])
-        print(output1.result())
         input1 = BinaryInput(output1.result())
         result1 = input1.load_string_list()
         self.assertEqual('hello', result1[0])
