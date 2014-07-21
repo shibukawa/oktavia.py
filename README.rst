@@ -15,6 +15,16 @@ Task:
 * [done] port FM-index
 * port Oktavia
 
+Development
+-----------
+
+Testing
+~~~~~~~
+
+.. code-block:: bash
+
+   $ nosetests test
+
 Link
 ---------
 

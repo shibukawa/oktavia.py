@@ -24,7 +24,7 @@ class BitVector(object):
         for i, value in enumerate(self._v):    
             if i % BitVector.BLOCK_RATE == 0:
                 self._r.append(self.size1())
-            self._size1 += self._rank32(self._v[i], BitVector.SMALL_BLOCK_SIZE, True)
+            self._size1 += self._rank32(self._v[i], BitVector.SMALL_BLOCK_SIZE)
 
     def clear(self):
         del self._v[:]
@@ -83,7 +83,7 @@ class BitVector(object):
         m  = 0x1 << r
         return bool(self._v[q] & m)
 
-    def rank (self, i, b = True):
+    def rank(self, i, b = True):
         '''
         :param i: position
         :type  i: int
@@ -97,17 +97,24 @@ class BitVector(object):
         if i == 0:
             return 0
         i -= 1
-        q_large = math.floor(i // BitVector.LARGE_BLOCK_SIZE)
-        q_small = math.floor(i // BitVector.SMALL_BLOCK_SIZE)
-        r       = math.floor(i % BitVector.SMALL_BLOCK_SIZE)
+        q_large = int(math.floor(i // BitVector.LARGE_BLOCK_SIZE))
+        q_small = int(math.floor(i // BitVector.SMALL_BLOCK_SIZE))
+        r       = int(math.floor(i % BitVector.SMALL_BLOCK_SIZE))
         rank = self._r[q_large]
         if not b:
             rank = q_large * BitVector.LARGE_BLOCK_SIZE - rank
         begin = q_large * BitVector.BLOCK_RATE
         for j in range(begin, q_small):
-            rank += self._rank32(self._v[j], BitVector.SMALL_BLOCK_SIZE, b)
-        rank += self._rank32(self._v[q_small], r + 1, b)
-        return rank
+            if b:
+                value = self._v[j]
+            else:
+                value = ~self._v[j]
+            rank += self._rank32(value, BitVector.SMALL_BLOCK_SIZE)
+        if b:
+            value = self._v[q_small]
+        else:
+            value = ~self._v[q_small]
+        return rank + self._rank32(value, r + 1)
 
     def select(self, i, b = True):
         '''
@@ -126,7 +133,7 @@ class BitVector(object):
         left = 0
         right = len(self._r)
         while left < right:
-            pivot = math.floor((left + right) // 2)
+            pivot = int(math.floor((left + right) // 2))
             rank  = self._r[pivot]
             if not b:
                 rank = pivot * BitVector.LARGE_BLOCK_SIZE - rank
@@ -141,14 +148,18 @@ class BitVector(object):
             i -= right * BitVector.LARGE_BLOCK_SIZE - self._r[right]
         j = right * BitVector.BLOCK_RATE
         while True:
-            rank = self._rank32(self._v[j], BitVector.SMALL_BLOCK_SIZE, b)
+            if b:
+                value = self._v[j]
+            else:
+                value = ~self._v[j]
+            rank = self._rank32(value, BitVector.SMALL_BLOCK_SIZE)
             if i < rank:
                 break
             j += 1
             i -= rank
         return j * BitVector.SMALL_BLOCK_SIZE + self._select32(self._v[j], i, b)
 
-    def _rank32(self, x, i, b):
+    def _rank32(self, x, i):
         '''
         :param x: x
         :type  x: int
@@ -157,9 +168,6 @@ class BitVector(object):
         :param b: b
         :type  b: bool
         '''
-        if not b:
-            x = ~x
-        
         x <<= (BitVector.SMALL_BLOCK_SIZE - i)
         x = ((x & 0xaaaaaaaa) >>  1) + (x & 0x55555555)
         x = ((x & 0xcccccccc) >>  2) + (x & 0x33333333)
@@ -228,6 +236,5 @@ class BitVector(object):
         '''
         self.clear()
         self._size = input.load_32bit_number()
-        result = input.load_32bit_number_list()
-        self._v.fromlist(result)
+        self._v.fromlist(input.load_32bit_number_list())
         self.build()

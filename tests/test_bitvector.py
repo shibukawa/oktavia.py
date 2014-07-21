@@ -21,10 +21,10 @@ class BitVectorTest(unittest.TestCase):
         self.bv0.build()
 
     def test_size(self):
-        self.assertEqual(self.src_values[-1] + 1, self.bv1.size())
-        self.assertEqual(len(self.src_values), self.bv1.size1())
-        self.assertEqual(self.src_values[-1] + 1, self.bv0.size())
-        self.assertEqual(len(self.src_values), self.bv0.size0())
+        self.assertEqual(self.src_values[-1] + 1, self.bv1.size()) # = 3001
+        self.assertEqual(len(self.src_values), self.bv1.size1())   # = 6
+        self.assertEqual(self.src_values[-1] + 1, self.bv0.size()) # = 3001
+        self.assertEqual(len(self.src_values), self.bv0.size0())   # = 6
 
     def test_get(self):
         for v in self.src_values:
