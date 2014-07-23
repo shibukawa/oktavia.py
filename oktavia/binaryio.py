@@ -1,5 +1,7 @@
 import struct
 
+_range = getattr(__builtins__, 'xrange', range)
+
 class BinaryInput(object):
     def __init__(self, buffer):
         self._buffer = buffer;
@@ -36,12 +38,12 @@ class BinaryInput(object):
 
     def load_string_list(self):
         length = self.load_32bit_number()
-        return [self.load_string() for i in range(length)]
+        return [self.load_string() for i in _range(length)]
 
     def load_string_list_map(self):
         result = {}
         length = self.load_32bit_number()
-        for i in range(length):
+        for i in _range(length):
             key = self.load_string()
             values = self.load_string_list()
             result[key] = values
@@ -54,18 +56,18 @@ class BinaryInput(object):
             tag = self.load_16bit_number()
             if (tag >> 15) == 1: # zebra
                 length = min(result_length - len(result), 15)
-                for i in range(length):
+                for i in _range(length):
                     if (tag >> i) & 0x1:
                         result.append(self.load_32bit_number())
                     else:
                         result.append(0);
             elif (tag >> 14) == 1: # non-zero
                 length = tag - 0x4000 + 1
-                for i in range(length):
+                for i in _range(length):
                     result.append(self.load_32bit_number())
             else: #zero
                 length = tag + 1
-                for i in range(length):
+                for i in _range(length):
                     result.append(0)
         return result
 
@@ -86,7 +88,7 @@ class BinaryOutput(object):
         byte_str = string.encode('utf_16_le')
         compress = True
         char_codes = []
-        for i in range(1, len(byte_str), 2):
+        for i in _range(1, len(byte_str), 2):
             if byte_str[i] != '\x00':
                 compress = False
                 break;
@@ -130,7 +132,7 @@ class BinaryOutput(object):
                 index += length
 
     def _count_zero(self, array, offset):
-        for i in range(offset, len(array)):
+        for i in _range(offset, len(array)):
             if array[i] != 0:
                 return i - offset
         return len(array) - offset
@@ -149,7 +151,7 @@ class BinaryOutput(object):
             return True
         change = 0
         is_last_zero = False
-        for i in range(offset, offset + 15):
+        for i in _range(offset, offset + 15):
             if array[i] == 0:
                 if not is_last_zero:
                     is_last_zero = True
@@ -162,7 +164,7 @@ class BinaryOutput(object):
 
     def _search_double_zero(self, array, offset):
         is_last_zero = False;
-        for i in range(offset, len(array)):
+        for i in _range(offset, len(array)):
             if array[i] == 0:
                 if is_last_zero:
                     return i - offset - 1
@@ -180,7 +182,7 @@ class BinaryOutput(object):
                 block_length = length
                 length = 0
             self.dump_16bit_number((block_length - 1) + 0x4000)
-            for i in range(offset, offset + block_length):
+            for i in _range(offset, offset + block_length):
                 self.dump_32bit_number(array[i])
             offset += block_length
 
@@ -189,7 +191,7 @@ class BinaryOutput(object):
         code = 0x8000
         temp_output = self._output
         index = len(self._output)
-        for i in range(offset, last):
+        for i in _range(offset, last):
             if array[i] != 0:
                 self.dump_32bit_number(array[i]);
                 code = code + (0x1 << (i - offset));

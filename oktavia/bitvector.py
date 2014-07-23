@@ -9,6 +9,8 @@ from . import binaryio
 import math
 import array
 
+_range = getattr(__builtins__, 'xrange', range)
+
 class BitVector(object):
     SMALL_BLOCK_SIZE =  32
     LARGE_BLOCK_SIZE = 256
@@ -104,7 +106,7 @@ class BitVector(object):
         if not b:
             rank = q_large * BitVector.LARGE_BLOCK_SIZE - rank
         begin = q_large * BitVector.BLOCK_RATE
-        for j in range(begin, q_small):
+        for j in _range(begin, q_small):
             if b:
                 value = self._v[j]
             else:

@@ -12,6 +12,8 @@ import struct
 from . import binaryio
 from . import bitvector
 
+_range = getattr(__builtins__, 'xrange', range)
+
 class WaveletMatrix(object):
 
     def __init__(self):
@@ -28,7 +30,7 @@ class WaveletMatrix(object):
 
     def set_max_char_code(self, char_code):
         self._maxcharcode = char_code
-        self._bitsize = math.ceil(math.log(self._maxcharcode) / math.log(2))
+        self._bitsize = int(math.ceil(math.log(self._maxcharcode) / math.log(2)))
 
     def max_char_code(self):
         return self._maxcharcode
@@ -50,7 +52,7 @@ class WaveletMatrix(object):
             v = struct.unpack("<%dH" % size, rawstring)
         self._usedChars = set(v)
         bitsize = self.bitsize()
-        for i in range(bitsize):
+        for i in _range(bitsize):
             self._bv.append(bitvector.BitVector())
             self._seps.append(0)
         self._size = size
@@ -159,9 +161,9 @@ class WaveletMatrix(object):
         output.dump_16bit_number(max(self._usedChars))
         output.dump_16bit_number(self.bitsize())
         output.dump_32bit_number(self._size)
-        for i in range(self.bitsize()):
+        for i in _range(self.bitsize()):
             self._bv[i].dump(output)
-        for i in range(self.bitsize()):
+        for i in _range(self.bitsize()):
             output.dump_32bit_number(self._seps[i])
         output.dump_32bit_number(len(self._range))
         for key, value in self._range.items():
@@ -173,14 +175,14 @@ class WaveletMatrix(object):
         self._maxcharcode = input.load_16bit_number()
         self._bitsize = input.load_16bit_number()
         self._size = input.load_32bit_number()
-        for i in range(self.bitsize()):
+        for i in _range(self.bitsize()):
             bit_vector = bitvector.BitVector()
             bit_vector.load(input)
             self._bv.append(bit_vector)
-        for i in range(self.bitsize()):
+        for i in _range(self.bitsize()):
             self._seps.append(input.load_32bit_number())
         range_size = input.load_32bit_number()
-        for i in range(range_size):
+        for i in _range(range_size):
             key = input.load_32bit_number()
             value = input.load_32bit_number()
             self._range[key] = value
