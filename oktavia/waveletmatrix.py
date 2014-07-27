@@ -22,7 +22,7 @@ class WaveletMatrix(object):
         self._seps = []
         self._maxcharcode = 65535
         self._bitsize = 16
-        self._usedChars = []
+        self._usedChars = set()
         self.clear()
 
     def bitsize(self):
@@ -158,7 +158,7 @@ class WaveletMatrix(object):
         return rlt
     
     def dump(self, output):
-        output.dump_16bit_number(max(self._usedChars))
+        output.dump_16bit_number(self._maxcharcode)
         output.dump_16bit_number(self.bitsize())
         output.dump_32bit_number(self._size)
         for i in _range(self.bitsize()):

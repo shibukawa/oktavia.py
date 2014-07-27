@@ -45,11 +45,9 @@ class FMIndexTest(unittest.TestCase):
             self.sd.append(self.str[i:].replace(chr(0), ''))
 
     def test_size(self):
-        print("test_size")
         self.assertEqual(len(self.str), self.fm.size())
 
     def test_get_rows(self):
-        print("test_get_rows")
         for i in range(self.fm.size()):
             for j in range(i + 1, self.fm.size()): 
                 s = self.str[i:j]
@@ -58,18 +56,15 @@ class FMIndexTest(unittest.TestCase):
                 self.assertEqual(expect, actual)
 
     def test_get_position(self):
-        print("test_get_position")
         for i, expect in enumerate(self.pd):
             self.assertEqual(expect, self.fm.get_position(i))
 
     def test_get_substring(self):
-        print("test_get_substring")
         for i, expect in enumerate(self.sd):
             actual = self.fm.get_substring(i, self.fm.size())
             self.assertEqual(expect, actual)
 
     def test_get_substring2(self):
-        print("test_get_substring2")
         self.fm = FMIndex()
         self.fm.append("abracadabra")
         self.fm.append("mississippi")
@@ -80,7 +75,6 @@ class FMIndexTest(unittest.TestCase):
         self.assertEqual('abracadabra mississippi', self.fm.get_substring(22, 23))
 
     def test_get_substring_with_compressed_word(self):
-        print("test_get_substring_with_compressed_word")
         codes = ['\x00', '\x01', '\x03', 'a', 'b', 'r', 'c', 'd', 'm', 'i', 's', 'p', ' ']
         def encode(string):
             return [codes.index(c) for c in string]
@@ -89,7 +83,6 @@ class FMIndexTest(unittest.TestCase):
             return "".join((codes[rawcode] for rawcode in rawcodes))
 
         self.fm = FMIndex(rawmode=True)
-        print type(encode("abracadabra"))
         self.fm.append(encode("abracadabra"))
         self.fm.append([1])
         self.fm.append(encode("mississippi"))
@@ -102,7 +95,6 @@ class FMIndexTest(unittest.TestCase):
         self.assertEqual('abracadabra mississippi', decode(self.fm.get_substring(24, 23)))
 
     def test_get_substring_before_build(self):
-        print("test_get_substring_before_build")
         self.fm = FMIndex()
         self.fm.append("abracadabra")
         self.fm.append('\x01')
@@ -115,7 +107,6 @@ class FMIndexTest(unittest.TestCase):
         self.assertEqual('abracadabra mississippi', self.fm.get_substring(24, 23))
 
     def test_get_position_boundary(self):
-        print("test_get_position_boundary")
         try:
             self.fm.get_position(self.fm.size())
         except:
@@ -124,7 +115,6 @@ class FMIndexTest(unittest.TestCase):
             self.fail("fm.get_position()")
 
     def test_get_substring_boundary(self):
-        print("test_get_substring_boundary")
         try:
             self.fm.get_substring(self.fm.size(), 0)
         except:
@@ -133,14 +123,12 @@ class FMIndexTest(unittest.TestCase):
             self.fail("fm.get_substring()")
 
     def test_search(self):
-        print("test_search")
         results = self.fm.search("ssi")
         self.assertEqual(4, len(results))
         for result in results:
             self.assertEqual('ssi', self.fm.get_substring(result, 3))
 
     def test_dump_load_and_size(self):
-        print("test_dump_load_and_size")
         dump = BinaryOutput()
         self.fm.dump(dump)
         self.fm.load(BinaryInput(dump.result()))
@@ -148,7 +136,6 @@ class FMIndexTest(unittest.TestCase):
         self.assertEqual(len(self.str), self.fm.size())
 
     def test_dump_load_and_get_rows(self):
-        print("test_dump_load_and_get_rows")
         dump = BinaryOutput()
         self.fm.dump(dump)
         fm = FMIndex()
@@ -157,24 +144,20 @@ class FMIndexTest(unittest.TestCase):
         for i in range(fm.size()):
             for j in range(i + 1, fm.size()): 
                 s = self.str[i:j]
+                self.fm.get_rows(s)
+                fm.get_rows(s)
                 self.assertEqual(self.rd[s], fm.get_rows(s))
 
-    '''def test_dump_load_and_get_position(self):
-        print("test_dump_load_and_get_position")
+    def test_dump_load_and_get_position(self):
         dump = BinaryOutput()
-        print("@1")
         self.fm.dump(dump)
-        print("@2")
         fm = FMIndex()
         fm.load(BinaryInput(dump.result()))
 
         for i, expect in enumerate(self.pd):
-            print(i)
             self.assertEqual(expect, fm.get_position(i))
-        print("@4")'''
 
     def test_dump_load_and_get_substring(self):
-        print("test_dump_load_and_get_substring")
         dump = BinaryOutput()
         self.fm.dump(dump)
         fm = FMIndex()
@@ -185,7 +168,6 @@ class FMIndexTest(unittest.TestCase):
             self.assertEqual(expect, actual)
 
     def test_dump_load_and_get_position_boundary(self):
-        print("test_dump_load_and_get_position_boundary")
         dump = BinaryOutput()
         self.fm.dump(dump)
         fm = FMIndex()
@@ -199,7 +181,6 @@ class FMIndexTest(unittest.TestCase):
             self.fail("fm.get_position()")
 
     def test_dump_load_and_get_substring_boundary(self):
-        print("test_dump_load_and_get_substring_boundary")
         dump = BinaryOutput()
         self.fm.dump(dump)
         fm = FMIndex()

@@ -48,11 +48,11 @@ class FMIndex(object):
         return self._sv.get(pos)
 
     def get_rows(self, key, pos=None):
-        i = len(key) - 1
         if isinstance(key, str):
             # convert to JavaScript compatible string
             rawstring = key.encode('utf_16_le')
             key = struct.unpack("<%dH" % len(key), rawstring)
+        i = len(key) - 1
         c = key[i]
         first = self._rlt[c] + 1
         last  = self._rlt[c + 1]
