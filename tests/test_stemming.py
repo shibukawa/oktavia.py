@@ -1,40 +1,38 @@
 import unittest
 from oktavia.oktavia import Oktavia
-import metadata
-import snowballstemmer.englishstemmer
+import snowballstemmer
 
 class StemmingTest(unittest.TestCase):
-
     def setUp(self):
         self.oktavia = Oktavia()
-        self.oktavia.setStemmer(new EnglishStemmer())
-        self.section = self.oktavia.addSection('document')
-        self.oktavia.addWord("stemming baby", True)
-        self.section.setTail("doc1")
-        self.oktavia.addWord("stemmed babies", True)
-        self.section.setTail("doc2")
+        self.oktavia.set_stemmer(snowballstemmer.EnglishStemmer())
+        self.section = self.oktavia.add_section(u'document')
+        self.oktavia.add_word(u"stemming baby", stemming=True)
+        self.section.set_tail(u"doc1")
+        self.oktavia.add_word(u"stemmed babies", stemming=True)
+        self.section.set_tail(u"doc2")
         self.oktavia.build()
 
     def test_search_without_stemming(self):
-        results = self.oktavia.rawSearch('baby', False)
-        self.assertEqual(1, results.length)
+        results = self.oktavia.raw_search(u'baby', stemming=False)
+        self.assertEqual(1, len(results))
 
     def test_search_with_stemming(self):
-        results = self.oktavia.rawSearch('baby', True)
-        self.assertEqual(1, results.length)
+        results = self.oktavia.raw_search(u'baby', stemming=True)
+        self.assertEqual(1, len(results))
 
     def test_load_dump_and_search_without_stemming(self):
         dump = self.oktavia.dump()
         oktavia = Oktavia()
-        oktavia.setStemmer(EnglishStemmer())
+        oktavia.set_stemmer(snowballstemmer.EnglishStemmer())
         oktavia.load(dump)
-        results = oktavia.rawSearch('baby', False)
-        self.assertEqual(1, results.length)
+        results = oktavia.raw_search(u'baby', stemming=False)
+        self.assertEqual(1, len(results))
 
     def test_load_dump_and_search_with_stemming(self):
         dump = self.oktavia.dump()
         oktavia = Oktavia()
-        oktavia.setStemmer(EnglishStemmer())
+        oktavia.set_stemmer(snowballstemmer.EnglishStemmer())
         oktavia.load(dump)
-        results = oktavia.rawSearch('baby', True)
-        self.assertEqual(1, results.length)
+        results = oktavia.raw_search(u'baby', stemming=True)
+        self.assertEqual(1, len(results))

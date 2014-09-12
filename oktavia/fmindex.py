@@ -12,7 +12,16 @@ from . import waveletmatrix
 from . import bwt
 from . import binaryio
 
-_range = getattr(__builtins__, 'xrange', range)
+try:
+    _range = xrange
+except NameError:
+    _range = range
+try:
+    _strtype = basestring
+except NameError:
+    _strtype = str
+
+_strtype = basestring
 
 class FMIndex(object):
     def __init__(self, rawmode = False):
@@ -48,7 +57,8 @@ class FMIndex(object):
         return self._sv.get(pos)
 
     def get_rows(self, key, pos=None):
-        if isinstance(key, str):
+        import sys
+        if isinstance(key, _strtype):
             # convert to JavaScript compatible string
             rawstring = key.encode('utf_16_le')
             key = struct.unpack("<%dH" % len(key), rawstring)
@@ -134,7 +144,7 @@ class FMIndex(object):
         for c in _range(maxChar):
             self._rlt[c] = self._sv.rank_less_than(size, c)
         self._rlt[maxChar] = 0;
-        self._ddic = ddic
+        self._ddic = int(ddic)
         self._buildDictionaries()
         self._build = True
 
@@ -192,7 +202,7 @@ class FMIndex(object):
 
     def load(self, input):
         self.clear()
-        self._ddic = input.load_32bit_number()
+        self._ddic = int(input.load_32bit_number())
         self._ssize = input.load_32bit_number()
         self._head = input.load_32bit_number()
         self._sv.load(input)

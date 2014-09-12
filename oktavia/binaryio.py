@@ -3,9 +3,9 @@ import struct
 _range = getattr(__builtins__, 'xrange', range)
 
 class BinaryInput(object):
-    def __init__(self, buffer):
+    def __init__(self, buffer, offset=0):
         self._buffer = buffer;
-        self._offset = 0;
+        self._offset = offset;
 
     def load_32bit_number(self):
         '''
@@ -74,14 +74,30 @@ class BinaryInput(object):
 class BinaryOutput(object):
     def __init__(self):
         self._output = []
+        self.outputBytes = 0;
 
     def dump_32bit_number(self, num):
         self._output.append(struct.pack('<I', num % (2 ** 32)))
+        self.outputBytes += 4
 
     def dump_16bit_number(self, num):
         self._output.append(struct.pack('<H', num % (2 ** 16)))
+        self.outputBytes += 2
+
+    @staticmethod
+    def convert_16bit_number(num):
+        return struct.pack('<H', num % (2 ** 16))
 
     def dump_string(self, string):
+        if type(string) is list:
+            string = struct.pack('<%dH' % len(string), *string).decode("utf_16_le")
+        converted_result = BinaryOutput.convert_string(string)
+        self.outputBytes += len(converted_result)
+        self._output.append(converted_result)
+
+    @staticmethod
+    def convert_string(string):
+        result = []
         if len(string) > 32768:
             string = string[0:32768]
         length = len(string)
@@ -93,13 +109,18 @@ class BinaryOutput(object):
                 compress = False
                 break;
         if compress:
-            self.dump_16bit_number(length + 32768)
-            self._output.append(string.encode('latin-1'))
+            result.append(BinaryOutput.convert_16bit_number(length + 32768))
+            result.append(string.encode('latin-1'))
             if length % 2 == 1:
-                self._output.append(b'\x00')
+                result.append(b'\x00')
         else:
-            self.dump_16bit_number(length)
-            self._output.append(byte_str)
+            result.append(BinaryOutput.convert_16bit_number(length))
+            result.append(byte_str)
+        return b"".join(result)
+
+    def dump_raw_string(self, string):
+        self._output.append(string)
+        self.outputBytes += len(string)
 
     def dump_string_list(self, str_list):
         self.dump_32bit_number(len(str_list))
@@ -196,6 +217,7 @@ class BinaryOutput(object):
                 self.dump_32bit_number(array[i]);
                 code = code + (0x1 << (i - offset));
         self._output.insert(index, struct.pack('<H', code % (2 ** 16)))
+        self.outputBytes += 2
 
     def result(self):
         return b''.join(self._output);
