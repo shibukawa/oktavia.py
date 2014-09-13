@@ -21,7 +21,7 @@ setup(name='oktavia',
           'License :: OSI Approved :: MIT License',
           'Operating System :: OS Independent',
           'Programming Language :: JavaScript',
-          'Programming Language :: Python :: 3.3',
+          'Programming Language :: Python :: 2.7',
           'Topic :: Internet :: WWW/HTTP :: Indexing/Search'
       ], # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
       keywords='search python javascript fmindex',

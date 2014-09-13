@@ -16,6 +16,7 @@ try:
     _range = xrange
 except NameError:
     _range = range
+
 try:
     _strtype = basestring
 except NameError:

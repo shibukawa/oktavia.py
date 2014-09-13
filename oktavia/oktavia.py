@@ -144,13 +144,15 @@ class Oktavia(object):
 
     def _convertToCompressionCode(self, keyword):
         resultChars = []
+        if type(keyword) is not list:
+            keyword = to_utf16(keyword)
         for originalChar in keyword:
             if originalChar not in self._utf162compressCode:
                 resultChars.append("\x02")
             else:
                 char = self._utf162compressCode[originalChar]
                 resultChars.append(char)
-        return b"".join(resultChars)
+        return resultChars
 
     def raw_search(self, keyword, stemming=False):
         if not self._build:

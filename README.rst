@@ -1,29 +1,17 @@
 Oktavia for Python
 =======================
 
-This is under construction
+This is a search engine based on FM-index.
+This is a Python port of original JSX version.
 
-Task:
-
-* [done] port binary-io
-
-  * [done] Test compatibility between https://npmjs.org/package/binary-io.jsx
-
-* [done] port Succinct Bit Vector
-* [done] port BW transform
-* [done] port SAIS
-* [done] port FM-index
-* port Oktavia
-
-Development
------------
+Now it is an alpha version. I am adding Python 3.4 support and more detail document.
 
 Testing
 ~~~~~~~
 
 .. code-block:: bash
 
-   $ nosetests test
+   $ nosetests tests
 
 Link
 ---------
