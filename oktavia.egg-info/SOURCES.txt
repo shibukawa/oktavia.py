@@ -7,7 +7,6 @@ oktavia/bitvector.py
 oktavia/bwt.py
 oktavia/fmindex.py
 oktavia/metadata.py
-oktavia/oktavia-mkindex.py
 oktavia/oktavia.py
 oktavia/query.py
 oktavia/sais.py

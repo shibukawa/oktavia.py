@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: oktavia
-Version: 0.1.0dev-r0
+Version: 0.2.0dev-r0
 Summary: High performance pure Python/JavaScript search engine
 Home-page: https://github.com/shibukawa/oktavia.py/
 Author: Yoshiki Shibukawa
@@ -22,5 +22,8 @@ Classifier: Environment :: Web Environment
 Classifier: License :: OSI Approved :: MIT License
 Classifier: Operating System :: OS Independent
 Classifier: Programming Language :: JavaScript
+Classifier: Programming Language :: Python :: 2.6
 Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3.3
+Classifier: Programming Language :: Python :: 3.4
 Classifier: Topic :: Internet :: WWW/HTTP :: Indexing/Search

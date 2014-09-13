@@ -3,4 +3,4 @@ from . import bwt
 from . import fmindex
 from . import waveletmatrix
 from . import binaryio
-from . import oktavia
+from .oktavia import *
