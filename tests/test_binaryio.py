@@ -42,7 +42,7 @@ class BinaryIOTest(unittest.TestCase):
         self.assertEqual('hello world', input1.load_string())
 
         # 7bit safe charactes will be compressed
-        self.assertLessEqual(len(output1.result()) / 2, len('hello world'))
+        self.assertTrue(len(output1.result()) / 2 <= len('hello world'))
 
         output2 = BinaryOutput()
         output2.dump_string('')

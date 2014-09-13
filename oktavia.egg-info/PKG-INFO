@@ -1,11 +1,26 @@
-Metadata-Version: 1.0
-Name: oktaia.py
-Version: 0.1.0dev
+Metadata-Version: 1.1
+Name: oktavia
+Version: 0.1.0dev-r0
 Summary: High performance pure Python/JavaScript search engine
 Home-page: https://github.com/shibukawa/oktavia.py/
 Author: Yoshiki Shibukawa
 Author-email: yoshiki@shibu.jp
 License: MIT
-Description: UNKNOWN
+Description: This is search engine is pure Python/JavaScript on-memory search engine.
+        
+        * It uses FM-Index as an algorithm.
+        * It is good for eastern asian languages (CJK) because it doesn't use an invert index.
+        * It works on completely on memory.
+        * There are JavaScript index generator/search engine too. You can provide search feature to you web applications and static HTML.
+        
+        
 Keywords: search python javascript fmindex
 Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Environment :: Console
+Classifier: Environment :: Web Environment
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: JavaScript
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Topic :: Internet :: WWW/HTTP :: Indexing/Search

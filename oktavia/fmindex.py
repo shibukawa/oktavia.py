@@ -22,8 +22,6 @@ try:
 except NameError:
     _strtype = str
 
-_strtype = basestring
-
 class FMIndex(object):
     def __init__(self, rawmode = False):
         self._ddic = 0

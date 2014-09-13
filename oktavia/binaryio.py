@@ -105,7 +105,7 @@ class BinaryOutput(object):
         compress = True
         char_codes = []
         for i in _range(1, len(byte_str), 2):
-            if byte_str[i] != '\x00':
+            if byte_str[i] != b'\x00' and byte_str[i] != 0:
                 compress = False
                 break;
         if compress:

@@ -108,7 +108,8 @@ class Oktavia(object):
     def add_word(self, word, stemming=None):
         word.encode
         string = []
-        for charCode in to_utf16(word):
+        utf16word = to_utf16(word)
+        for charCode in utf16word:
             if charCode not in self._utf162compressCode:
                 convertedChar = len(self._compressCode2utf16)
                 self._utf162compressCode[charCode] = convertedChar
@@ -117,7 +118,7 @@ class Oktavia(object):
                 convertedChar = self._utf162compressCode[charCode]
             string.append(convertedChar)
         self._fmindex.append(string)
-        self._isLastEob = word[-1] < 2
+        self._isLastEob = utf16word[-1] < 2
 
         if stemming is None:
             return
@@ -160,11 +161,8 @@ class Oktavia(object):
         if stemming:
             result = []
             if self._stemmer:
-                print keyword
                 baseWord = self._stemmer.stemWord(keyword.lower())
-                print baseWord, self._stemmingResult
                 if baseWord in self._stemmingResult:
-                    print("contains")
                     stemmedList = self._stemmingResult[baseWord]
                     for word in stemmedList:
                         result += self._fmindex.search(word)
@@ -204,7 +202,7 @@ class Oktavia(object):
         if not self._build:
             raise RuntimeError("Oktavia.build() is not called yet")
         output = binaryio.BinaryOutput()
-        headerSource = b"oktavia-02"
+        headerSource = u"oktavia-02"
         output.dump_raw_string(binaryio.BinaryOutput.convert_string(headerSource)[2:])
         if verbose:
             print('Source text size: %d bytes' % (self._fmindex.size() * 2))
@@ -226,7 +224,7 @@ class Oktavia(object):
         return output.result()
 
     def load(self, data):
-        headerSource = b"oktavia-02"
+        headerSource = u"oktavia-02"
         header = binaryio.BinaryOutput.convert_string(headerSource)[2:]
         if data[0:10] != header:
             raise ValueError('Invalid data file')
