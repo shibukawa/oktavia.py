@@ -173,19 +173,19 @@ class Oktavia(object):
     def search(self, queries):
         if not self._build:
             raise RuntimeError("Oktavia.build() is not called yet")
-        summary = SearchSummary(self)
+        summary = searchresult.SearchSummary(self)
         for query in queries:
             summary.add_query(self._searchQuery(query))
         summary.merge_result()
         return summary
 
     def _searchQuery(self, query):
-        result = SingleResult(query.word, query.OR, query.NOT)
-        if query.raw:
+        result = searchresult.SingleResult(query.word, query.OR, query.NOT)
+        if query.RAW:
             positions = self.raw_search(query.word, False)
         else:
-            positions = self.raw_search(query.word, False).concat(self.rawSearch(query.word, True))
-        self.getPrimaryMetadata().grouping(result, positions, query.word, not query.raw)
+            positions = self.raw_search(query.word, False) + (self.raw_search(query.word, True))
+        self.get_primary_metadata().grouping(result, positions, query.word, not query.RAW)
         return result
 
     def build(self, cacheDensity=5):
