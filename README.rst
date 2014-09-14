@@ -4,7 +4,8 @@ Oktavia for Python
 This is a search engine based on FM-index.
 This is a Python port of original JSX version.
 
-Now it is an alpha version. I am adding Python 3.4 support and more detail document.
+Development
+----------------
 
 Testing
 ~~~~~~~
@@ -16,4 +17,6 @@ Testing
 Link
 ---------
 
-* http://oktavia.info
+* JSX version: https://github.com/shibukawa/oktavia
+* Python version: https://github.com/shibukawa/oktavia.py
+* Web Site: http://oktavia.info

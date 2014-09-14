@@ -9,6 +9,7 @@ oktavia/fmindex.py
 oktavia/metadata.py
 oktavia/oktavia.py
 oktavia/query.py
+oktavia/queryparser.py
 oktavia/sais.py
 oktavia/searchresult.py
 oktavia/waveletmatrix.py
