@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '0.4.2'
+version = '0.4.3'
 
 setup(name='oktavia',
       version=version,
@@ -25,6 +25,7 @@ setup(name='oktavia',
           'Programming Language :: Python :: 2.7',
           'Programming Language :: Python :: 3.3',
           'Programming Language :: Python :: 3.4',
+          'Programming Language :: Python :: Implementation :: PyPy',
           'Topic :: Internet :: WWW/HTTP :: Indexing/Search'
       ], # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
       keywords='search python javascript fmindex',
