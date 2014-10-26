@@ -5,8 +5,8 @@ Original source code:
 '''
 
 from . bitvector import BitVector
-
-_range = getattr(__builtins__, 'xrange', range)
+import sys
+_range = range if sys.version_info.major == 3 else xrange
 
 class OArray(object):
     def __init__(self, array, offset = 0):

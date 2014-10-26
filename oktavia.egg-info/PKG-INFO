@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: oktavia
-Version: 0.4.3dev-r0
+Version: 0.4.3
 Summary: High performance pure Python/JavaScript search engine
 Home-page: https://github.com/shibukawa/oktavia.py/
 Author: Yoshiki Shibukawa
