@@ -7,15 +7,13 @@ License: http:#shibu.mit-license.org/
 
 import math
 import struct
+import sys
 
 from . import waveletmatrix
 from . import bwt
 from . import binaryio
 
-try:
-    _range = xrange
-except NameError:
-    _range = range
+_range = range if sys.version_info[0] == 3 else xrange
 
 try:
     _strtype = basestring
@@ -131,13 +129,13 @@ class FMIndex(object):
         return struct.pack('<%dH' % len(codes), *codes).decode('utf_16_le')
 
     def build(self, ddic, maxChar=65535):
-        import time
-        time1 = time.time()
+        #import time
+        #time1 = time.time()
         doc = self._join()
-        time2 = time.time()
+        #time2 = time.time()
         #print("@@debug: join: %f" % (time2 - time1))
         sa = bwt.BWT(doc, rawmode=self._rawmode)
-        time3 = time.time()
+        #time3 = time.time()
         #print("@@debug: bwt: %f" % (time3 - time2))
         s = sa.get()
         self._ssize = len(s)
@@ -146,18 +144,16 @@ class FMIndex(object):
         self._sv.set_max_char_code(maxChar)
         self._sv.build(s)
         size = self.size()
-        time4 = time.time()
+        #time4 = time.time()
         #print("@@debug: build wavelet matrix: %f" % (time4 - time3))
         for c in _range(maxChar):
             self._rlt[c] = self._sv.rank_less_than(size, c)
-        time5 = time.time()
+        #time5 = time.time()
         #print("@@debug: calc rank: %f" % (time5 - time4))
         self._rlt[maxChar] = 0;
         self._ddic = int(ddic)
-        import cProfile
-        cProfile.runctx("self._buildDictionaries()", globals(), locals())
         self._buildDictionaries()
-        time6 = time.time()
+        #time6 = time.time()
         #print("@@debug: build dict: %f" % (time6 - time5))
         self._build = True
 

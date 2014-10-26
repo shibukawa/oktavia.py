@@ -2,6 +2,7 @@ README.rst
 setup.cfg
 setup.py
 oktavia/__init__.py
+oktavia/_bitvector.cpp
 oktavia/binaryio.py
 oktavia/bitvector.py
 oktavia/bwt.py

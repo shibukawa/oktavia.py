@@ -1,6 +1,7 @@
+import sys
 from . sais import SAIS
 
-_range = getattr(__builtins__, 'xrange', range)
+_range = range if sys.version_info[0] == 3 else xrange
 
 class BWT(object):
 

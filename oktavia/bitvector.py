@@ -6,10 +6,11 @@ License: http://shibu.mit-license.org/
 '''
 
 from . import binaryio
+import sys
 import math
 import array
 
-_range = getattr(__builtins__, 'xrange', range)
+_range = range if sys.version_info[0] == 3 else xrange
 
 class BitVector(object):
     SMALL_BLOCK_SIZE =  32

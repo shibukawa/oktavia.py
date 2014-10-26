@@ -1,6 +1,7 @@
 import struct
+import sys
 
-_range = getattr(__builtins__, 'xrange', range)
+_range = range if sys.version_info[0] == 3 else xrange
 
 class BinaryInput(object):
     def __init__(self, buffer, offset=0):

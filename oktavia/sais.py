@@ -4,9 +4,15 @@ Original source code:
 * http:#www.cs.sysu.edu.cn/nong/index.files/Two%20Efficient%20Algorithms%20for%20Linear%20Suffix%20Array%20Construction.pdf
 '''
 
-from . bitvector import BitVector
 import sys
-_range = range if sys.version_info.major == 3 else xrange
+from . import bitvector
+
+try:
+    from . import _bitvector as native_bitvector
+except ImportError:
+    native_bitvector = None
+
+_range = range if sys.version_info[0] == 3 else xrange
 
 class OArray(object):
     def __init__(self, array, offset = 0):
@@ -84,7 +90,10 @@ class SAIS(object):
     @staticmethod
     def _make(s, SA, n, K):
         # Classify the type of each character
-        t = BitVector()
+        if native_bitvector:
+            t = native_bitvector.BitVector()
+        else:
+            t = bitvector.BitVector()
         t.set(n - 2, False)
         t.set(n - 1, True) # the sentinel must be in s1, important!!!
         for i in _range(n - 3, -1, -1):

@@ -5,6 +5,7 @@ https://code.google.com/p/shellinford/
 License: http://shibu.mit-license.org/
 '''
 
+import sys
 import copy
 import math
 import struct
@@ -12,7 +13,12 @@ import struct
 from . import binaryio
 from . import bitvector
 
-_range = getattr(__builtins__, 'xrange', range)
+try:
+    from . import _bitvector as native_bitvector
+except ImportError:
+    native_bitvector = None
+
+_range = range if sys.version_info[0] == 3 else xrange
 
 class WaveletMatrix(object):
 
@@ -53,7 +59,10 @@ class WaveletMatrix(object):
         self._usedChars = set(v)
         bitsize = self.bitsize()
         for i in _range(bitsize):
-            self._bv.append(bitvector.BitVector())
+            if native_bitvector:
+                self._bv.append(native_bitvector.BitVector())
+            else:
+                self._bv.append(bitvector.BitVector())
             self._seps.append(0)
         self._size = size
         for i, c in enumerate(v):
@@ -162,7 +171,11 @@ class WaveletMatrix(object):
         output.dump_16bit_number(self.bitsize())
         output.dump_32bit_number(self._size)
         for i in _range(self.bitsize()):
-            self._bv[i].dump(output)
+            if native_bitvector:
+                output.dump_32bit_number(self._bv[i].size())
+                output.dump_32bit_number_list(self._bv[i].int32vector())
+            else:
+                self._bv[i].dump(output)
         for i in _range(self.bitsize()):
             output.dump_32bit_number(self._seps[i])
         output.dump_32bit_number(len(self._range))
